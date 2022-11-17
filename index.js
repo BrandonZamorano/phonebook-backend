@@ -3,8 +3,10 @@ const morgan = require('morgan');
 const app = express();
 const PORT = 3001;
 
+morgan.token('postData', (request, response) => JSON.stringify(request.body))
+
 app.use(express.json())
-app.use(morgan('tiny'))
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :postData'))
 
 let persons = [
     {
@@ -46,7 +48,6 @@ app.get("/api/persons", (request, response) => {
 const generateId = () => Math.floor(Math.random() * 3000)
 app.post("/api/persons", (request, response) => {
     const body = request.body
-    console.log(body);
 
     if (!body || !body.name || !body.number) {
         return response.status(400).json({

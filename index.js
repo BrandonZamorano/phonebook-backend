@@ -61,29 +61,33 @@ app.get("/api/persons", (request, response) => {
 
 
 const generateId = () => Math.floor(Math.random() * 3000)
-app.post("/api/persons", (request, response) => {
-    const body = request.body
+app.post("/api/persons", (request, response, next) => {
+    const { name, number } = request.body
 
-    if (!body || !body.name || !body.number) {
-        return response.status(400).json({
-            error: "name or number is missing"
-        })
-    }
+    // if (!body || !body.name || !body.number) {
+    //     return response.status(400).json({
+    //         error: "name or number is missing"
+    //     })
+    // }
+    // 
+
+
 
     const person = new Person({
-        name: body.name,
-        number: body.number
-    })
-    
-    person.save()
-    .then(savedPerson => {
-        response.json(savedPerson)
+        name,
+        number
     })
 
-    
-    
+    person.save()
+        .then(savedPerson => {
+            response.json(savedPerson)
+        })
+        .catch(error => next(error))
+
+
+
     // response.json(person);
-    
+
 })
 
 app.get("/api/persons/:id", (request, response, next) => {
@@ -106,7 +110,7 @@ app.put("/api/persons/:id", (request, response, next) => {
         number
     }
 
-    Person.findByIdAndUpdate(id, person, { new: true })
+    Person.findByIdAndUpdate(id, person, { new: true, runValidators: true, context: 'query' })
         .then(updatedPerson => {
             console.log("updated Person: ", updatedPerson);
             if (!updatedPerson) {
@@ -138,10 +142,15 @@ const errorHandler = (error, request, response, next) => {
     console.log(error.name);
     
     if (error.name === "CastError") {
-        response.status(400).send({
+        return response.status(400).send({
             error: "bad id"
         })
+    } else if (error.name === "ValidationError") {
+        return response.status(400).send({
+            error: error.message
+        })
     }
+
     
 }
 

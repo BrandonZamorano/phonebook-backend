@@ -81,17 +81,18 @@ app.post("/api/persons", (request, response) => {
     
 })
 
-app.get("/api/persons/:id", (request, response) => {
+app.get("/api/persons/:id", (request, response, next) => {
     const id = request.params.id
     
     Person.findById(id)
     .then(person => {
         response.json(person)
     })
+    .catch(error => next(error))
 
 })
 
-app.delete("/api/persons/:id", (request, response) => {
+app.delete("/api/persons/:id", (request, response, next) => {
     const id = request.params.id
 
     Person.findByIdAndDelete(id)
@@ -100,11 +101,24 @@ app.delete("/api/persons/:id", (request, response) => {
             response.status(204).end();
         })
         .catch(error => {
-            console.log(error)
-            response.status(400).end();
+            next(error)
         })
 
 })
+
+
+const errorHandler = (error, request, response, next) => {
+    console.log(error.name);
+    
+    if (error.name === "CastError") {
+        response.status(400).send({
+            error: "bad id"
+        })
+    }
+    
+}
+
+app.use(errorHandler)
 
 
 app.listen(PORT, () => {

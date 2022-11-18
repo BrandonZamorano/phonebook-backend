@@ -92,11 +92,18 @@ app.get("/api/persons/:id", (request, response) => {
 })
 
 app.delete("/api/persons/:id", (request, response) => {
-    const id = Number(request.params.id)
+    const id = request.params.id
 
-    persons = persons.filter(person => person.id !== id);
+    Person.findByIdAndDelete(id)
+        .then(result => {
+            console.log(result);
+            response.status(204).end();
+        })
+        .catch(error => {
+            console.log(error)
+            response.status(400).end();
+        })
 
-    response.status(204).end();
 })
 
 

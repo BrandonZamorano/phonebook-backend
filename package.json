@@ -25,6 +25,7 @@
   "homepage": "https://github.com/BrandonZamorano/phonebook-backend#readme",
   "dependencies": {
     "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "mongoose": "^6.7.2",
     "morgan": "^1.10.0"

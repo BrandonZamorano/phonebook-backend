@@ -92,6 +92,28 @@ app.get("/api/persons/:id", (request, response, next) => {
 
 })
 
+app.put("/api/persons/:id", (request, response, next) => {
+    const id = request.params.id;
+    const { name, number } = request.body;
+
+    const person = {
+        name,
+        number
+    }
+
+    Person.findByIdAndUpdate(id, person, { new: true })
+        .then(updatedPerson => {
+            console.log("updated Person: ", updatedPerson);
+            if (!updatedPerson) {
+                return response.status(404).end()
+            }
+            response.json(updatedPerson)
+        })
+        .catch(error => next(error))
+
+
+})
+
 app.delete("/api/persons/:id", (request, response, next) => {
     const id = request.params.id
 

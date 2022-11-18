@@ -64,25 +64,27 @@ const generateId = () => Math.floor(Math.random() * 3000)
 app.post("/api/persons", (request, response, next) => {
     const { name, number } = request.body
 
-    // if (!body || !body.name || !body.number) {
-    //     return response.status(400).json({
-    //         error: "name or number is missing"
-    //     })
-    // }
-    // 
-
-
 
     const person = new Person({
         name,
         number
     })
 
-    person.save()
-        .then(savedPerson => {
-            response.json(savedPerson)
+    Person.find({name})
+        .then(results => {
+            console.log("RESULTS: ", results)
+            if (results.length >= 1) {
+                return response.status(400).send({ error: "Person with name already exists!" })
+            } else {
+
+                person.save()
+                    .then(savedPerson => {
+                        response.json(savedPerson)
+                    })
+            }
         })
         .catch(error => next(error))
+
 
 
 

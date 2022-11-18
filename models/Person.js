@@ -1,8 +1,8 @@
 const mongoose = require('mongoose')
 
 mongoose.connect(process.env.MONGODB_URI)
-    .then(result => {
-        console.log((`DB Connected!`));
+    .then(() => {
+        console.log(('DB Connected!'))
     })
     .catch(err => console.log(err))
 
@@ -27,12 +27,12 @@ const personSchema = new mongoose.Schema({
 
 personSchema.set('toJSON', {
     transform: (document, returnedObject) => {
-        returnedObject.id = returnedObject._id.toString();
-        delete returnedObject._id;
-        delete returnedObject.__v;
+        returnedObject.id = returnedObject._id.toString()
+        delete returnedObject._id
+        delete returnedObject.__v
     }
 })
 
 
 
-module.exports = mongoose.model("Person", personSchema);
+module.exports = mongoose.model('Person', personSchema)

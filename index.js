@@ -36,13 +36,18 @@ let persons = [
     }
 ];
 
-app.get("/info", (request, response) => {
+app.get("/info", (request, response, next) => {
     const timestamp = new Date();
-    
-    response.send(`
-        <p>Phonebook has info for ${persons.length} people</p>
+
+    Person.find({})
+        .then(results => {
+            response.send(`
+        <p>Phonebook has info for ${results.length} people</p>
         <p>${timestamp}</p>
     `)
+                .catch(error => next(error))
+        })
+
 })
 
 app.get("/api/persons", (request, response) => {
